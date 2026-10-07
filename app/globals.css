@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-navy-950: #060912;
+  --color-navy-900: #0b1220;
+  --color-navy-800: #121b2f;
+  --color-navy-700: #1c2a46;
+  --color-ice: #f4f7fb;
+
+  /* ÇINAR GROUP: bright corporate green + deep teal */
+  --color-brand-50: #f2fbf6;
+  --color-brand-100: #d9f5e4;
+  --color-brand-200: #b4f0cf;
+  --color-brand-300: #6ee7a8;
+  --color-brand-400: #00c853;
+  --color-brand-500: #00a651;
+  --color-brand-600: #008a44;
+  --color-brand-700: #046b48;
+  --color-brand-800: #115e59;
+  --color-brand-900: #0c3f3b;
+  --color-brand-950: #06221f;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: #00a651;
+  color: #04140c;
+}
+
+.tech-grid {
+  background-image:
+    linear-gradient(to right, rgba(0, 166, 81, 0.11) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 166, 81, 0.11) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 30% 20%, #000 12%, transparent 72%);
+}
+
+.warehouse-scene {
+  background-color: #04140c;
+  background-image:
+    linear-gradient(180deg, rgba(4, 20, 12, 0.2), rgba(4, 20, 12, 0.55)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 166, 81, 0.09) 0 2px,
+      transparent 2px 92px
+    ),
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 52px,
+      rgba(0, 166, 81, 0.07) 52px 54px
+    ),
+    radial-gradient(880px 480px at 78% 42%, rgba(0, 166, 81, 0.22), transparent 62%),
+    linear-gradient(155deg, #06221f 0%, #07140f 42%, #060912 100%);
+}
+
+.hero-glow {
+  background:
+    radial-gradient(920px 520px at 85% 0%, rgba(0, 166, 81, 0.18), transparent 55%),
+    radial-gradient(720px 460px at 0% 85%, rgba(17, 94, 89, 0.46), transparent 58%),
+    linear-gradient(180deg, #060912 0%, #07140f 58%, #0a1c16 100%);
+}
+
+.ambient-wash {
+  background:
+    radial-gradient(720px 320px at 50% 0%, rgba(0, 166, 81, 0.12), transparent 68%),
+    radial-gradient(520px 280px at 100% 100%, rgba(17, 94, 89, 0.32), transparent 62%),
+    #060912;
+}
+
+.input-field {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  color: #f8fafc;
+  color-scheme: dark;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input-field::placeholder {
+  color: #94a3b8;
+}
+
+.input-field:focus {
+  border-color: #00a651;
+  box-shadow: 0 0 0 4px rgba(0, 166, 81, 0.18);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee 42s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+@keyframes announcement-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.announcement-track {
+  animation: announcement-scroll 50s linear infinite;
+}
+
+.announcement-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-track {
+    animation: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .input-field {
+    font-size: 0.875rem;
+  }
+}
