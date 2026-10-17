@@ -527,7 +527,7 @@ export const tr = {
     next: "İleri",
     back: "Geri",
     submit: "Başvuruyu Tamamla",
-    submitting: "Gönderiliyor",
+    submitting: "Gönderiliyor...",
     home: "Ana Sayfaya Dön",
     successMessage:
       "Başvurunuz başarıyla alındı! İnsan Kaynakları ekibimiz en kısa sürede sizinle iletişime geçecektir.",

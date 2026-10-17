@@ -518,7 +518,7 @@ export const en = {
     next: "Next",
     back: "Back",
     submit: "Submit Application",
-    submitting: "Sending",
+    submitting: "Sending...",
     home: "Return to Homepage",
     successMessage:
       "Your application has been received! Our Human Resources team will contact you as soon as possible.",

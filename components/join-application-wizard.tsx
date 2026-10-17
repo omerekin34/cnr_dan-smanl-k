@@ -9,6 +9,7 @@ import {
   CircleCheck,
   Forklift,
   HardHat,
+  Loader2,
   Sparkles,
   Truck,
   Warehouse,
@@ -17,6 +18,7 @@ import {
 import Link from "next/link";
 import { useState, type FormEvent, type ReactNode } from "react";
 import type { Locale } from "@/lib/i18n";
+import { getSupabaseBrowserClient } from "@/lib/supabase";
 import { ghostButtonClass, glowButtonClass } from "@/lib/styles";
 import type { Dictionary } from "@/types/content";
 
@@ -62,6 +64,17 @@ const emptyForm: FormState = {
   website: "",
 };
 
+function optionLabel(options: { id: string; label: string }[], id: string) {
+  return options.find((option) => option.id === id)?.label ?? id;
+}
+
+function toHasExperience(id: string, label: string) {
+  const values = [id, label].map((value) => value.trim().toLocaleLowerCase("tr-TR"));
+  if (values.some((value) => value === "evet" || value === "yes")) return true;
+  if (values.some((value) => value === "hayır" || value === "hayir" || value === "no")) return false;
+  return null;
+}
+
 const slide = {
   enter: (direction: number) => ({ opacity: 0, x: direction > 0 ? 28 : -28 }),
   center: { opacity: 1, x: 0 },
@@ -82,7 +95,7 @@ export function JoinApplicationWizard({ lang, content }: JoinApplicationWizardPr
   const [stepTwoErrors, setStepTwoErrors] = useState<StepTwoErrors>({});
   const [scheduleError, setScheduleError] = useState("");
   const [genericError, setGenericError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const stepCount = content.steps.length;
   const progress = (Math.min(currentStep, stepCount) / stepCount) * 100;
@@ -146,27 +159,31 @@ export function JoinApplicationWizard({ lang, content }: JoinApplicationWizardPr
       return;
     }
 
-    setSubmitting(true);
+    const hasExperience = toHasExperience(
+      form.experience,
+      optionLabel(content.experienceOptions, form.experience),
+    );
+    if (hasExperience === null) {
+      setGenericError(content.errorGeneric);
+      return;
+    }
+
+    setIsSubmitting(true);
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: "application",
-          name: form.name.trim(),
-          phone: form.phone.trim(),
-          location: form.location,
-          roles: form.roles,
-          experience: form.experience,
-          license: form.license,
-          schedule: form.schedule,
-          notes: form.notes.trim(),
-          locale: lang,
-          website: form.website,
-        }),
+      const supabase = getSupabaseBrowserClient();
+      // Anonymous clients may insert, but cannot read the new row back.
+      const { error } = await supabase.from("job_applications").insert({
+        full_name: form.name.trim(),
+        phone_number: form.phone.trim(),
+        location: optionLabel(content.locations, form.location),
+        desired_fields: form.roles.map((roleId) => optionLabel(content.roles, roleId)),
+        has_experience: hasExperience,
+        driving_license: optionLabel(content.licenses, form.license),
+        work_preference: optionLabel(content.schedules, form.schedule),
+        additional_notes: form.notes.trim() ? form.notes.trim() : null,
       });
 
-      if (!response.ok) {
+      if (error) {
         setGenericError(content.errorGeneric);
         return;
       }
@@ -175,7 +192,7 @@ export function JoinApplicationWizard({ lang, content }: JoinApplicationWizardPr
     } catch {
       setGenericError(content.errorGeneric);
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -289,7 +306,7 @@ export function JoinApplicationWizard({ lang, content }: JoinApplicationWizardPr
                   form={form}
                   scheduleError={scheduleError}
                   genericError={genericError}
-                  submitting={submitting}
+                  isSubmitting={isSubmitting}
                   onChange={(patch) => {
                     setForm((current) => ({ ...current, ...patch }));
                     if ("schedule" in patch) setScheduleError("");
@@ -494,7 +511,7 @@ function PreferenceStep({
   form,
   scheduleError,
   genericError,
-  submitting,
+  isSubmitting,
   onChange,
   onBack,
   onSubmit,
@@ -503,7 +520,7 @@ function PreferenceStep({
   form: FormState;
   scheduleError: string;
   genericError: string;
-  submitting: boolean;
+  isSubmitting: boolean;
   onChange: (patch: Partial<FormState>) => void;
   onBack: () => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -554,13 +571,14 @@ function PreferenceStep({
         </p>
       ) : null}
       <StepActions>
-        <button type="button" className={backClass} onClick={onBack} disabled={submitting}>
+        <button type="button" className={backClass} onClick={onBack} disabled={isSubmitting}>
           <ArrowLeft className="h-5 w-5" aria-hidden="true" />
           {content.back}
         </button>
-        <button type="submit" className={nextClass} disabled={submitting}>
-          {submitting ? content.submitting : content.submit}
-          <ArrowRight className="h-5 w-5" aria-hidden="true" />
+        <button type="submit" className={nextClass} disabled={isSubmitting} aria-busy={isSubmitting}>
+          {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : null}
+          {isSubmitting ? content.submitting : content.submit}
+          {isSubmitting ? null : <ArrowRight className="h-5 w-5" aria-hidden="true" />}
         </button>
       </StepActions>
     </form>

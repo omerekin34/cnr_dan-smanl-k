@@ -37,6 +37,36 @@ html {
   color: #04140c;
 }
 
+/* Site-themed scrollbar */
+html {
+  color-scheme: dark;
+  scrollbar-width: thin;
+  scrollbar-color: #00a651 #060912;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060912;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00c853, #008a44);
+  border-radius: 999px;
+  border: 2px solid #060912;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6ee7a8, #00a651);
+}
+
+::-webkit-scrollbar-corner {
+  background: #060912;
+}
+
 .tech-grid {
   background-image:
     linear-gradient(to right, rgba(0, 166, 81, 0.11) 1px, transparent 1px),
